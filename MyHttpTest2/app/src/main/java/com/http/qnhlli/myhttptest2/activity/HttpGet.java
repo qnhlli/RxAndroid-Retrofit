@@ -2,9 +2,11 @@ package com.http.qnhlli.myhttptest2.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.http.qnhlli.myhttptest2.R;
 import com.http.qnhlli.myhttptest2.impl.HttpImpl;
+import com.http.qnhlli.myhttptest2.util.HttpMethods;
 import com.http.qnhlli.myhttptest2.util.HttpUtil;
 import com.http.qnhlli.myhttptest2.util.ResponseMessage;
 
@@ -19,47 +21,30 @@ import rx.schedulers.Schedulers;
  * Created by qnhlli on 2016/6/20.
  */
 public class HttpGet extends AppCompatActivity {
-    private Retrofit retrofit;
-    private  HttpImpl service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.210/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .client(HttpUtil.genericClient())
-                .build();
-       service = retrofit.create(HttpImpl.class);
-        getTest();
-
+        getMovie();
     }
-    private void getTest()
-    {
-        /**
-         * GET请求
-         */
-      service = retrofit.create(HttpImpl.class);
-        service.getAccount(6703)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResponseMessage>() {
-                    @Override
-                    public void onCompleted() {
-                        System.out.println("---onCompleted");
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        System.out.println("---onError" + e.getMessage().toString());
-                    }
+    private void getMovie(){
+       Subscriber subscriber = new Subscriber<ResponseMessage>() {
+            @Override
+            public void onCompleted() {
+                System.out.println("---onCompleted");
+            }
 
-                    @Override
-                    public void onNext(ResponseMessage responseMessage) {
-//                        System.out.println("---onCompleted"+responseMessage.getResultCode());
-                        System.out.println("---onCompleted" + responseMessage.getDataContent());
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                System.out.println("---onError" + e.getMessage().toString());
+            }
+
+           @Override
+           public void onNext(ResponseMessage responseMessage) {
+               System.out.println("---onCompleted" + responseMessage.getDataContent());
+           }
+       };
+        HttpMethods.getInstance().GET(subscriber, 6703);
     }
 }

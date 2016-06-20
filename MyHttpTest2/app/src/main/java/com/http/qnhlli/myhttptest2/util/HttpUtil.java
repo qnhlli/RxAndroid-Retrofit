@@ -7,6 +7,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by qnhlli on 2016/6/15.
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class HttpUtil {
     private static final String ACCESS_NAME = "nhh@admin";
     private static final String ACCESS_PASSWORD = "nhh$2015";
-
+    private static final int DEFAULT_TIMEOUT = 5;
     /**
      * 拦截器,添加头部
      *
@@ -22,6 +23,8 @@ public class HttpUtil {
      */
     public static OkHttpClient genericClient() {
         OkHttpClient httpClient = new OkHttpClient();
+        //设置超时时间
+        httpClient.setConnectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         Interceptor interceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
